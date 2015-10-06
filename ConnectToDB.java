@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnectToDB {
+public class ConnectToDB implements AutoCloseable {
 	private Connection con;
 	
 	// Connect to database using DriverManager.getConnection
