@@ -85,8 +85,7 @@ public class DBHandlerBoklisteTest {
 		try {
 			ArrayList<String> table = dbHB.getTable();
 			assertEquals("isbn|forfatter|tittel", table.get(0));
-			assertEquals("", table.contains(""));
-			System.out.println(table.toString());
+			assertTrue(table.contains("111-62-74-96761-2|JAMES JOYCE|ULYSSES"));
 		} catch (SQLException e) {
 			fail ("SQLException: " + e.getMessage());
 		}
