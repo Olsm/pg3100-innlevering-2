@@ -23,7 +23,7 @@ public class DBHandlerBokliste {
 	public DBHandlerBokliste (String user, String password) throws SQLException {
 		tableName = "pg3100";
 		
-		// Connect to database localhost and get connection.
+		// Connect to database local host and get connection.
 		db = new ConnectToDB ("localhost", tableName, user, password);
 		con = db.getConnection();
 	}
@@ -36,53 +36,38 @@ public class DBHandlerBokliste {
 	// Update book title
 	public int updateTittel (String nyTittel, String tittel) throws SQLException {
 		String sql = "UPDATE `bokliste` SET `tittel` = ? WHERE `tittel` = ?";
-		pstmtUpdateTittel = con.prepareStatement(sql);
-		pstmtUpdateTittel.setString(1, nyTittel);
-		pstmtUpdateTittel.setString(2, tittel);
-		return pstmtUpdateTittel.executeUpdate();
+		return executeSQLUpdate(pstmtUpdateTittel, sql, nyTittel, tittel, null);
 	}
 	
 	// Update author name
 	public int updateForfatter (String nyForfatter, String forfatter) throws SQLException {
 		String sql = "UPDATE `bokliste` SET `forfatter` = ? WHERE `forfatter` = ?";
-		pstmtUpdateForfatter = con.prepareStatement(sql);
-		pstmtUpdateForfatter.setString(1, nyForfatter);
-		pstmtUpdateForfatter.setString(2, forfatter);
-		return pstmtUpdateForfatter.executeUpdate();
+		return executeSQLUpdate(pstmtUpdateForfatter, sql, nyForfatter, forfatter, null);
 	}
 	
 	// Delete rows of this author
 	public int deleteForfatter (String forfatter) throws SQLException {
 		String sql = "DELETE FROM `bokliste` WHERE `forfatter` = ?";
-		pstmtDeleteForfatter = con.prepareStatement(sql);
-		pstmtDeleteForfatter.setString(1, forfatter);
-		return pstmtDeleteForfatter.executeUpdate();
+		return executeSQLUpdate(pstmtDeleteForfatter, sql, forfatter, null, null);
 	}
 	
 	// Delete rows with this book title
 	public int deleteTittel (String tittel) throws SQLException {
 		String sql = "DELETE FROM `bokliste` WHERE `tittel` = ?";
-		pstmtDeleteTittel = con.prepareStatement(sql);
-		pstmtDeleteTittel.setString(1, tittel);
-		return pstmtDeleteTittel.executeUpdate();
+		return executeSQLUpdate(pstmtDeleteTittel, sql, tittel, null, null);
 	}
 	
 	// Insert a row into table with isbn, author and title
 	public int insertRow (String isbn, String forfatter, String tittel) throws SQLException {
 		String sql = "INSERT INTO `bokliste`(`isbn`, `forfatter`, `tittel`) VALUES (?, ?, ?)";
-		pstmtInsertRow = con.prepareStatement(sql);
-		pstmtInsertRow.setString(1, isbn);
-		pstmtInsertRow.setString(2, forfatter);
-		pstmtInsertRow.setString(3, tittel);
-		return pstmtInsertRow.executeUpdate();
+		return executeSQLUpdate(pstmtInsertRow, sql, isbn, forfatter, tittel);
 	}
 	
 	// Get all rows in table and return arraylist of strings
 	public ArrayList<String> getTable() throws SQLException {
 		ArrayList<String> table = new ArrayList<>();
 		String sql = "SELECT * FROM `bokliste`";
-		pstmtGetTable = con.prepareStatement(sql);
-		ResultSet rs = pstmtGetTable.executeQuery(); 
+		ResultSet rs = executeSQLSelect (pstmtGetTable, sql, null, null, null); 
 		
 		ResultSetMetaData rsmd = rs.getMetaData();
 		table.add (rsmd.getColumnName(1) + "|" + rsmd.getColumnName(2) + "|" 
@@ -98,13 +83,40 @@ public class DBHandlerBokliste {
 	// Get row and return a string like "isbn|author|title"
 	public String getRow (String forfatter, String tittel) throws SQLException {
 		String sql = "SELECT * FROM `bokliste` WHERE `forfatter` = ? AND `tittel` = ?";
-		pstmtGetRow = con.prepareStatement(sql);
-		pstmtGetRow.setString(1, forfatter);
-		pstmtGetRow.setString(2, tittel);
-		ResultSet rs = pstmtGetRow.executeQuery();
+		ResultSet rs = executeSQLSelect (pstmtGetRow, sql, forfatter, tittel, null); 
 		
 		rs.next();
 		return rs.getString("isbn") + "|" + 
 			rs.getString ("forfatter") + "|" + rs.getString ("tittel");
+	}
+	
+	// Private method to execute SQL update statements
+	private int executeSQLUpdate (PreparedStatement pstmt, String sql, 
+			String arg1, String arg2, String arg3) throws SQLException {
+		pstmt = prepareSQL (pstmt, sql, arg1, arg2, arg3);
+		return pstmt.executeUpdate();	// Execute SQL update and return result
+	}
+	
+	// Private method to execute SQL select statements
+	private ResultSet executeSQLSelect (PreparedStatement pstmt, String sql, 
+			String arg1, String arg2, String arg3) throws SQLException {
+		pstmt = prepareSQL (pstmt, sql, arg1, arg2, arg3);
+		return pstmt.executeQuery();	// Execute SQL select and return result
+	}
+	
+	// Private method to prepare SQL statements
+	private PreparedStatement prepareSQL (PreparedStatement pstmt, String sql, 
+			String arg1, String arg2, String arg3) throws SQLException {
+		pstmt = con.prepareStatement(sql);	// prepare the sql statement
+		
+		// Set string for arguments only if they are not null
+		if (arg1 != null) 
+			pstmt.setString(1, arg1);
+		if (arg2 != null)
+			pstmt.setString(2, arg2);
+		if (arg3 != null)
+			pstmt.setString(3, arg3);
+		
+		return pstmt;	// Return the prepared SQL PreparedStatement
 	}
 }
