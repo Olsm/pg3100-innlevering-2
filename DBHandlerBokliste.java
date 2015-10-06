@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 import db.ConnectToDB;
 
 public class DBHandlerBokliste {
@@ -31,31 +32,49 @@ public class DBHandlerBokliste {
 		db.close();
 	}
 	
+	// Update book title
 	public int updateTittel (String nyTittel, String tittel) throws SQLException {
-		return 0;
-		}
+		String sql = "UPDATE `bokliste` SET `tittel` = ? WHERE `tittel` = ?";
+		pstmtUpdateTittel = con.prepareStatement(sql);
+		pstmtUpdateTittel.setString(1, nyTittel);
+		pstmtUpdateTittel.setString(2, tittel);
+		return pstmtUpdateTittel.executeUpdate();
+	}
 	
-	public int UpdateForfatter (String nyForfatter, String forfatter) throws SQLException {
-		return 0;
-		}
+	// Update author name
+	public int updateForfatter (String nyForfatter, String forfatter) throws SQLException {
+		String sql = "UPDATE `bokliste` SET `forfatter` = ? WHERE `forfatter` = ?";
+		pstmtUpdateForfatter = con.prepareStatement(sql);
+		pstmtUpdateForfatter.setString(1, nyForfatter);
+		pstmtUpdateForfatter.setString(2, forfatter);
+		return pstmtUpdateForfatter.executeUpdate();
+	}
 	
+	// Delete rows of this author
 	public int deleteForfatter (String forfatter) throws SQLException {
-		return 0;
-		}
+		String sql = "DELETE FROM `bokliste` WHERE `forfatter` = ?";
+		pstmtDeleteForfatter = con.prepareStatement(sql);
+		pstmtDeleteForfatter.setString(1, forfatter);
+		return pstmtDeleteForfatter.executeUpdate();
+	}
 	
+	// Delete rows with this book title
 	public int deleteTittel (String tittel) throws SQLException {
-		return 0;
-		}
+		String sql = "DELETE FROM `bokliste` WHERE `forfatter` = ?";
+		pstmtDeleteTittel = con.prepareStatement(sql);
+		pstmtDeleteTittel.setString(1, tittel);
+		return pstmtDeleteTittel.executeUpdate();
+	}
 	
 	public int insertRow (String isbn, String forfatter, String tittel) throws SQLException {
 		return 0;
-		}
+	}
 	
 	public ArrayList<String> getTable() throws SQLException {
 		return null;
-		}
+	}
 	
 	public String getRow (String forfatter, String tittel) throws SQLException {
-		return tittel;
-		}
+		return null;
+	}
 }
