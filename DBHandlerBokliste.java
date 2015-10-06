@@ -26,8 +26,9 @@ public class DBHandlerBokliste {
 		con = db.getConnection();
 	}
 	
+	// Close the database connection.
 	public void close() throws SQLException {
-		
+		db.close();
 	}
 	
 	public int updateTittel (String nyTittel, String tittel) throws SQLException {
