@@ -60,14 +60,19 @@ public class DBHandlerBokliste {
 	
 	// Delete rows with this book title
 	public int deleteTittel (String tittel) throws SQLException {
-		String sql = "DELETE FROM `bokliste` WHERE `forfatter` = ?";
+		String sql = "DELETE FROM `bokliste` WHERE `tittel` = ?";
 		pstmtDeleteTittel = con.prepareStatement(sql);
 		pstmtDeleteTittel.setString(1, tittel);
 		return pstmtDeleteTittel.executeUpdate();
 	}
 	
 	public int insertRow (String isbn, String forfatter, String tittel) throws SQLException {
-		return 0;
+		String sql = "INSERT INTO `bokliste`(`isbn`, `forfatter`, `tittel`) VALUES (?, ?, ?)";
+		pstmtInsertRow = con.prepareStatement(sql);
+		pstmtInsertRow.setString(1, isbn);
+		pstmtInsertRow.setString(2, forfatter);
+		pstmtInsertRow.setString(3, tittel);
+		return pstmtInsertRow.executeUpdate();
 	}
 	
 	public ArrayList<String> getTable() throws SQLException {
