@@ -2,6 +2,7 @@ package innlevering2;
 
 import static org.junit.Assert.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -81,12 +82,24 @@ public class DBHandlerBoklisteTest {
 
 	@Test
 	public void testGetTable() {
-		fail("Not yet implemented");
+		try {
+			ArrayList<String> table = dbHB.getTable();
+			assertEquals("isbn|forfatter|tittel", table.get(0));
+			assertEquals("", table.contains(""));
+			System.out.println(table.toString());
+		} catch (SQLException e) {
+			fail ("SQLException: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testGetRow() {
-		fail("Not yet implemented");
+		try {
+			String row = dbHB.getRow("JAMES JOYCE", "ULYSSES");
+			assertEquals("111-62-74-96761-2|JAMES JOYCE|ULYSSES", row);
+		} catch (SQLException e) {
+			fail ("SQLException: " + e.getMessage());
+		}
 	}
 
 }
