@@ -22,8 +22,10 @@ public class DBHandlerBokliste {
 		con = db.getConnection();
 	}
 	
-	// Close the database connection.
+	// Close PreparedStatement and the database connection.
 	public void close() throws SQLException {
+		if (pstmt != null)
+			pstmt.close();
 		db.close();
 	}
 	
@@ -71,6 +73,7 @@ public class DBHandlerBokliste {
 			table.add(rs.getString("isbn") + "|" + rs.getString ("forfatter") 
 					+ "|" + rs.getString ("tittel"));
 		}
+		rs.close();
 		return table;
 	}
 	
@@ -80,8 +83,10 @@ public class DBHandlerBokliste {
 		ResultSet rs = executeSQLSelect (sql, forfatter, tittel, null); 
 		
 		rs.next();
-		return rs.getString("isbn") + "|" + 
-			rs.getString ("forfatter") + "|" + rs.getString ("tittel");
+		String row = rs.getString("isbn") + "|" + 
+				rs.getString ("forfatter") + "|" + rs.getString ("tittel");
+		rs.close();
+		return row;
 	}
 	
 	// Private method to execute SQL update statements
