@@ -2,6 +2,7 @@ package innlevering2;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -79,7 +80,16 @@ public class DBHandlerBokliste {
 		return null;
 	}
 	
+	// Get row and return a string like "isbn|author|title"
 	public String getRow (String forfatter, String tittel) throws SQLException {
-		return null;
+		String sql = "SELECT * FROM `bokliste` WHERE `forfatter` = ? AND `tittel` = ?";
+		pstmtGetRow = con.prepareStatement(sql);
+		pstmtGetRow.setString(1, forfatter);
+		pstmtGetRow.setString(2, tittel);
+		ResultSet rs = pstmtGetRow.executeQuery();
+		
+		rs.next();
+		return rs.getString("isbn") + "|" + 
+			rs.getString ("forfatter") + "|" + rs.getString ("tittel");
 	}
 }
