@@ -3,9 +3,9 @@ package innlevering2;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import db.ConnectToDB;
 
 public class DBHandlerBokliste {
@@ -67,6 +67,7 @@ public class DBHandlerBokliste {
 		return pstmtDeleteTittel.executeUpdate();
 	}
 	
+	// Insert a row into table with isbn, author and title
 	public int insertRow (String isbn, String forfatter, String tittel) throws SQLException {
 		String sql = "INSERT INTO `bokliste`(`isbn`, `forfatter`, `tittel`) VALUES (?, ?, ?)";
 		pstmtInsertRow = con.prepareStatement(sql);
@@ -76,8 +77,22 @@ public class DBHandlerBokliste {
 		return pstmtInsertRow.executeUpdate();
 	}
 	
+	// Get all rows in table and return arraylist of strings
 	public ArrayList<String> getTable() throws SQLException {
-		return null;
+		ArrayList<String> table = new ArrayList<>();
+		String sql = "SELECT * FROM `bokliste`";
+		pstmtGetTable = con.prepareStatement(sql);
+		ResultSet rs = pstmtGetTable.executeQuery(); 
+		
+		ResultSetMetaData rsmd = rs.getMetaData();
+		table.add (rsmd.getColumnName(1) + "|" + rsmd.getColumnName(2) + "|" 
+				+ rsmd.getColumnName(3));
+		
+		while (rs.next()) {
+			table.add(rs.getString("isbn") + "|" + rs.getString ("forfatter") 
+					+ "|" + rs.getString ("tittel"));
+		}
+		return table;
 	}
 	
 	// Get row and return a string like "isbn|author|title"
